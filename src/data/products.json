@@ -1,0 +1,48 @@
+[
+	{
+	  "id": "chair-001",
+	  "slug": "ergo-comfort-chair",
+	  "modelName": "Ergo Comfort Chair",
+
+	  "status": "active",
+
+	  "pricing": {
+		"rep": 4200,
+		"semi": 5200,
+		"virgin": 6800
+	  },
+
+	  "colors": ["black", "grey", "blue"],
+
+	  "description": "Ergonomic office chair designed for long working hours with lumbar support and breathable mesh.",
+
+	  "features": [
+		"Adjustable height",
+		"Lumbar support",
+		"Breathable mesh back",
+		"360° swivel",
+		"Smooth rolling wheels"
+	  ],
+
+	  "specifications": [
+		{ "key": "Material", "value": "Mesh + Steel Frame" },
+		{ "key": "Weight Capacity", "value": "120 kg" },
+		{ "key": "Warranty", "value": "2 years" },
+		{ "key": "Seat Height Range", "value": "16–22 inches" }
+	  ],
+
+	  "category": "office",
+	  "tags": ["ergonomic", "bestseller"],
+
+	  "images": [
+		"ergo-comfort-chair-001.jpg",
+		"ergo-comfort-chair-002.jpg",
+		"ergo-comfort-chair-003.jpg"
+	  ],
+
+	  "thumbnail": "ergo-comfort-chair-001.jpg",
+
+	  "inStock": true,
+	  "leadTime": "3–5 days"
+	}
+]
