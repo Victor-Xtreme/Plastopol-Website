@@ -108,4 +108,3 @@ npm run export
 * Integrate GitHub API for automated commits
 * Set up deployment workflow
 * Improve UI/UX for catalog browsing
-

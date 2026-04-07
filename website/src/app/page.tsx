@@ -32,11 +32,6 @@ export default function HomePage() {
                     Browse Products
                   </Button>
                 </Link>
-                <Link href="/catalog">
-                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600">
-                    Search Catalog
-                  </Button>
-                </Link>
               </div>
             </div>
           </Container>
@@ -74,7 +69,7 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {['office', 'dining', 'lounge', 'outdoor'].map((category) => (
-                <Link key={category} href={`/catalog?category=${category}`}>
+                <Link key={category} href={`/products?category=${category}`}>
                   <div className="bg-white rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer text-center">
                     <h3 className="text-xl font-semibold text-gray-900 capitalize">
                       {category}
@@ -95,11 +90,11 @@ export default function HomePage() {
             <div className="text-center space-y-6">
               <h2 className="text-4xl font-bold">Ready to Find Your Perfect Chair?</h2>
               <p className="text-xl text-blue-100">
-                Explore our complete catalog with advanced filters and search
+                Explore our complete collection of premium furniture
               </p>
-              <Link href="/catalog">
+              <Link href="/products">
                 <Button variant="secondary" size="lg">
-                  Go to Catalog
+                  View All Products
                 </Button>
               </Link>
             </div>
