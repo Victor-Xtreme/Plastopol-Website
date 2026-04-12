@@ -41,6 +41,18 @@ export function ProductImage({ src, alt, className }: ProductImageProps) {
     }, delay);
   }
 
+  if (failed) {
+    return (
+      <div
+        className={`flex items-center justify-center bg-gray-100 text-gray-500 text-sm text-center px-3 ${className ?? ''}`}
+        role="img"
+        aria-label={alt}
+      >
+        <span className="leading-snug">{alt}</span>
+      </div>
+    );
+  }
+
   return (
     <img
       src={imgSrc}

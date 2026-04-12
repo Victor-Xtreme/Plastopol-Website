@@ -27,10 +27,10 @@ export function ProductCard({ product, dark = false }: ProductCardProps) {
   const meta = dark ? 'text-stone-500' : 'text-gray-500';
 
   return (
-    <Link href={`/products/${product.slug}`}>
+    <Link href={`/products/${product.slug}`} className="animate-on-scroll">
       <div className={`group cursor-pointer h-full ${card}`}>
         {/* Image */}
-        <div className="relative overflow-hidden h-56">
+        <div className="relative overflow-hidden h-56 animate-on-scroll">
           <ProductImage
             src={imageUrl}
             alt={product.modelName}
@@ -47,7 +47,7 @@ export function ProductCard({ product, dark = false }: ProductCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-3">
+        <div className="p-5 space-y-3 animate-on-scroll">
           <h3 className={`text-lg font-semibold ${title}`}>
             {product.modelName}
           </h3>

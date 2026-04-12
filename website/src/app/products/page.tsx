@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
 import { Container } from '../../components/layout/Container';
@@ -14,10 +13,10 @@ export default function ProductsPage() {
       <Navbar dark />
 
       <main className="flex-1">
-        {/* Page header with brown gradient */}
+        {/* Page header */}
         <section className="bg-gradient-to-br from-stone-900 via-amber-950 to-stone-950 py-16 border-b border-stone-800">
           <Container maxWidth="2xl">
-            <div className="space-y-3">
+            <div className="space-y-3 animate-page-enter">
               <p className="text-amber-500 text-sm font-semibold uppercase tracking-widest">
                 Collection
               </p>

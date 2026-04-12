@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 import "../styles/globals.css";
+import { ScrollAnimator } from "../components/layout/ScrollAnimator";
 
 export const metadata: Metadata = {
   title: "Plastopol - Premium Chair Furniture",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        <ScrollAnimator />
       </body>
     </html>
   );
