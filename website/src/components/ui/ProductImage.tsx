@@ -3,9 +3,9 @@
 import React, { useState, useRef } from 'react';
 
 interface ProductImageProps {
-  src: string;
-  alt: string;
-  className?: string;
+  readonly src: string;
+  readonly alt: string;
+  readonly className?: string;
 }
 
 const MAX_RETRIES = 3;
