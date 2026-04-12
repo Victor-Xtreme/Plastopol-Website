@@ -12,24 +12,27 @@ export default function HomePage() {
   const featuredProducts = allProducts.slice(0, 6);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
+    <div className="min-h-screen flex flex-col bg-slate-900">
+      <Navbar mid />
+
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+        {/* Hero — deep slate with a blue-to-indigo gradient */}
+        <section className="bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950 text-white py-24 border-b border-slate-700">
           <Container maxWidth="2xl">
             <div className="text-center space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold">
+              <p className="text-indigo-400 text-sm font-semibold uppercase tracking-widest">
+                Plastopol Furniture
+              </p>
+              <h1 className="text-5xl md:text-6xl font-bold text-slate-100">
                 Premium Chair Furniture
               </h1>
-              <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-                Discover our collection of ergonomic, stylish, and durable chairs for any space
+              <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                Ergonomic, stylish, and durable chairs crafted from recycled and virgin plastics — for any space
               </p>
               <div className="flex gap-4 justify-center pt-4">
-                <Link href="/products">
-                  <Button variant="secondary" size="lg">
-                    Browse Products
+                <Link href="/about">
+                  <Button variant="outline" size="lg" className="border-indigo-400 text-indigo-300 hover:bg-indigo-950">
+                    About Us
                   </Button>
                 </Link>
               </div>
@@ -37,17 +40,18 @@ export default function HomePage() {
           </Container>
         </section>
 
-        {/* Featured Products Section */}
-        <section className="py-16">
+        {/* Featured Products — slightly lighter slate */}
+        <section className="py-16 bg-slate-800">
           <Container maxWidth="2xl">
             <div className="mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-2">Featured Products</h2>
-              <p className="text-gray-600">Check out our most popular items</p>
+              <h2 className="text-4xl font-bold text-slate-100 mb-2">Featured Products</h2>
+              <p className="text-slate-400">Check out our most popular items</p>
             </div>
 
-            <ProductGrid 
+            <ProductGrid
               products={featuredProducts}
               itemsPerRow={3}
+              dark
             />
 
             <div className="text-center mt-12">
@@ -60,49 +64,32 @@ export default function HomePage() {
           </Container>
         </section>
 
-        {/* Categories Section */}
-        <section className="bg-gray-50 py-16">
+        {/* Categories — darkest section for contrast */}
+        <section className="py-16 bg-slate-900 border-t border-slate-700">
           <Container maxWidth="2xl">
-            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
+            <h2 className="text-4xl font-bold text-slate-100 mb-12 text-center">
               Browse by Category
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {['office', 'dining', 'lounge', 'outdoor'].map((category) => (
-                <Link key={category} href={`/products?category=${category}`}>
-                  <div className="bg-white rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer text-center">
-                    <h3 className="text-xl font-semibold text-gray-900 capitalize">
-                      {category}
-                    </h3>
-                    <p className="text-gray-600 text-sm mt-2">
-                      Explore {category} furniture
-                    </p>
+              {[
+                { name: 'office',  label: 'Office',  sub: 'Ergonomic workday seating' },
+                { name: 'dining',  label: 'Dining',  sub: 'Warm, inviting table chairs' },
+                { name: 'lounge',  label: 'Lounge',  sub: 'Relaxed and plush styles' },
+                { name: 'outdoor', label: 'Outdoor', sub: 'Weather-ready outdoor chairs' },
+              ].map(({ name, label, sub }) => (
+                <Link key={name} href={`/products?category=${name}`}>
+                  <div className="bg-slate-800 border border-slate-700 hover:border-indigo-500 rounded-xl p-6 hover:shadow-lg hover:shadow-indigo-900/20 transition-all cursor-pointer text-center">
+                    <h3 className="text-xl font-semibold text-slate-100">{label}</h3>
+                    <p className="text-slate-400 text-sm mt-2">{sub}</p>
                   </div>
                 </Link>
               ))}
             </div>
           </Container>
         </section>
-
-        {/* CTA Section */}
-        <section className="bg-blue-600 text-white py-16">
-          <Container maxWidth="2xl">
-            <div className="text-center space-y-6">
-              <h2 className="text-4xl font-bold">Ready to Find Your Perfect Chair?</h2>
-              <p className="text-xl text-blue-100">
-                Explore our complete collection of premium furniture
-              </p>
-              <Link href="/products">
-                <Button variant="secondary" size="lg">
-                  View All Products
-                </Button>
-              </Link>
-            </div>
-          </Container>
-        </section>
       </main>
 
-      <Footer />
+      <Footer dark />
     </div>
   );
 }

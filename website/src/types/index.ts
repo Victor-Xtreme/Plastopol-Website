@@ -1,9 +1,5 @@
 // src/types/index.ts
 
-// -----------------------------
-// Basic Utility Types
-// -----------------------------
-
 export type ProductStatus = "active" | "draft" | "archived";
 
 export type Category =
@@ -13,69 +9,30 @@ export type Category =
   | "outdoor"
   | "other";
 
-
-// -----------------------------
-// Core Sub-Structures
-// -----------------------------
-
-export interface Pricing {
-  rep: number;
-  semi: number;
-  virgin: number;
-}
-
 export interface Specification {
   key: string;
   value: string;
 }
 
-
-// -----------------------------
-// Main Product Type
-// -----------------------------
-
 export interface Product {
-  // Identity
-  id: string;            // internal (e.g., chair-042)
-  slug: string;          // URL (e.g., ergo-comfort-chair)
+  id: string;
+  slug: string;
   modelName: string;
-
-  // State control
   status: ProductStatus;
-
-  // Pricing
-  pricing: Pricing;
-
-  // Variants
   colors: string[];
-
-  // Display content
   description: string;
   features: string[];
   specifications: Specification[];
-
-  // Organization
   category: Category;
   tags: string[];
-
-  // Media
-  images: string[];      // ["slug-001.jpg", ...]
+  images: string[];
   thumbnail: string;
-
-  // Availability
   inStock: boolean;
   leadTime: string;
 }
 
-
-// -----------------------------
-// API / Admin Payloads
-// -----------------------------
-
-// Input from admin form BEFORE processing
 export interface ProductInput {
   modelName: string;
-  pricing: Pricing;
   colors: string[];
   description: string;
   features: string[];
@@ -86,13 +43,7 @@ export interface ProductInput {
   leadTime: string;
 }
 
-// After processing (what gets saved)
 export interface ProductRecord extends Product {}
-
-
-// -----------------------------
-// Search / Catalog Types
-// -----------------------------
 
 export interface SearchResult {
   item: Product;
@@ -101,8 +52,6 @@ export interface SearchResult {
 
 export interface CatalogFilters {
   category?: Category;
-  minPrice?: number;
-  maxPrice?: number;
   colors?: string[];
   inStock?: boolean;
 }

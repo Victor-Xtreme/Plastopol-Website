@@ -9,6 +9,7 @@ interface ProductGridProps {
   readonly isEmpty?: boolean;
   readonly emptyMessage?: string;
   readonly itemsPerRow?: 1 | 2 | 3 | 4;
+  readonly dark?: boolean;
 }
 
 export function ProductGrid({
@@ -16,6 +17,7 @@ export function ProductGrid({
   isEmpty = false,
   emptyMessage = 'No products found',
   itemsPerRow = 3,
+  dark = false,
 }: ProductGridProps) {
   const gridColsMap = {
     1: 'grid-cols-1',
@@ -27,7 +29,9 @@ export function ProductGrid({
   if (isEmpty || products.length === 0) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-500 text-lg">{emptyMessage}</p>
+        <p className={`text-lg ${dark ? 'text-stone-500' : 'text-gray-500'}`}>
+          {emptyMessage}
+        </p>
       </div>
     );
   }
@@ -35,7 +39,7 @@ export function ProductGrid({
   return (
     <div className={`grid ${gridColsMap[itemsPerRow]} gap-6`}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} dark={dark} />
       ))}
     </div>
   );
