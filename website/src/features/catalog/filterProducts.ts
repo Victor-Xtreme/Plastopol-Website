@@ -12,21 +12,6 @@ export function filterProducts(
       return false;
     }
 
-    // Price (use rep as base)
-    if (
-      filters.minPrice !== undefined &&
-      product.pricing.rep < filters.minPrice
-    ) {
-      return false;
-    }
-
-    if (
-      filters.maxPrice !== undefined &&
-      product.pricing.virgin > filters.maxPrice
-    ) {
-      return false;
-    }
-
     // Colors
     if (
       filters.colors &&

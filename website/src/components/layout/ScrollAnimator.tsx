@@ -7,25 +7,45 @@ export function ScrollAnimator() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Reset all elements to hidden on route change, then re-observe
-    const targets = document.querySelectorAll<Element>('.animate-on-scroll');
-    targets.forEach((el) => el.classList.remove('is-visible'));
-
-    const observer = new IntersectionObserver(
+    const intersectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
+            intersectionObserver.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    targets.forEach((el) => observer.observe(el));
+    function observe(el: Element) {
+      el.classList.remove('is-visible');
+      intersectionObserver.observe(el);
+    }
 
-    return () => observer.disconnect();
+    // Observe everything already in the DOM
+    document.querySelectorAll<Element>('.animate-on-scroll').forEach(observe);
+
+    // Watch for new elements added by React re-renders (e.g. search results)
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof Element)) return;
+          if (node.classList.contains('animate-on-scroll')) {
+            observe(node);
+          }
+          node.querySelectorAll<Element>('.animate-on-scroll').forEach(observe);
+        });
+      });
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      intersectionObserver.disconnect();
+      mutationObserver.disconnect();
+    };
   }, [pathname]);
 
   return null;

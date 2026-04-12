@@ -2,7 +2,7 @@
 
 import { Category } from "@/types";
 
-// Categories used across app
+// Categories used across the app — single source of truth
 export const CATEGORIES: Category[] = [
   "office",
   "dining",
@@ -11,24 +11,21 @@ export const CATEGORIES: Category[] = [
   "other",
 ];
 
-// Default filters
+// Default catalog filters
 export const DEFAULT_FILTERS = {
   category: undefined,
-  minPrice: 0,
-  maxPrice: Infinity,
   colors: [],
   inStock: undefined,
 };
 
-// Image settings
+// Image path settings used by CMS and components
 export const IMAGE_CONFIG = {
   folder: "/products/",
   extension: ".jpg",
-  padLength: 3, // for 001, 002...
+  padLength: 3, // zero-padded: 001, 002...
 };
 
 // App-level settings
 export const APP_CONFIG = {
-  siteName: "Chair Catalog",
-  currency: "INR",
+  siteName: "Plastopol",
 };

@@ -13,18 +13,13 @@ export function ProductSpecs({ product }: ProductSpecsProps) {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Specifications</h2>
-      
+    <div className="product-spec-bg">
+      <h2 className="text-2xl font-bold mb-6" style={{ color: 'inherit' }}>Specifications</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {product.specifications.map((spec, idx) => (
-          <div key={idx} className="space-y-1">
-            <dt className="text-sm font-semibold text-gray-600 uppercase">
-              {spec.key}
-            </dt>
-            <dd className="text-base text-gray-900">
-              {spec.value}
-            </dd>
+          <div key={idx} className="animate-on-scroll">
+            <dt className="product-spec-key">{spec.key}</dt>
+            <dd className="product-spec-val mt-1">{spec.value}</dd>
           </div>
         ))}
       </div>

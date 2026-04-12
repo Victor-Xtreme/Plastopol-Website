@@ -8,27 +8,20 @@ interface ProductImageProps {
   className?: string;
 }
 
-const PLACEHOLDER = '/images/placeholder.png';
 const MAX_RETRIES = 3;
-const BASE_DELAY_MS = 500; // doubles each attempt: 500ms, 1000ms, 2000ms
+const BASE_DELAY_MS = 500;
 
 export function ProductImage({ src, alt, className }: ProductImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
   const [failed, setFailed] = useState(false);
+  const [imgSrc, setImgSrc] = useState(src);
   const retryCount = useRef(0);
   const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function handleError() {
-    // Already showing placeholder — stop entirely
-    if (failed || imgSrc === PLACEHOLDER) {
-      setFailed(true);
-      return;
-    }
+    if (retryTimeout.current) clearTimeout(retryTimeout.current);
 
     if (retryCount.current >= MAX_RETRIES) {
-      // Give up, show placeholder permanently
       setFailed(true);
-      setImgSrc(PLACEHOLDER);
       return;
     }
 
@@ -36,7 +29,6 @@ export function ProductImage({ src, alt, className }: ProductImageProps) {
     retryCount.current += 1;
 
     retryTimeout.current = setTimeout(() => {
-      // Force a cache-bust so the browser actually re-requests
       setImgSrc(`${src}?retry=${retryCount.current}`);
     }, delay);
   }
@@ -44,7 +36,7 @@ export function ProductImage({ src, alt, className }: ProductImageProps) {
   if (failed) {
     return (
       <div
-        className={`flex items-center justify-center bg-gray-100 text-gray-500 text-sm text-center px-3 ${className ?? ''}`}
+        className={`flex items-center justify-center bg-gray-200 text-gray-500 text-sm text-center px-3 ${className ?? ''}`}
         role="img"
         aria-label={alt}
       >
