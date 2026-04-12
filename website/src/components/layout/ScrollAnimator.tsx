@@ -28,16 +28,20 @@ export function ScrollAnimator() {
     document.querySelectorAll<Element>('.animate-on-scroll').forEach(observe);
 
     // Watch for new elements added by React re-renders (e.g. search results)
+    function handleAddedNode(node: Node) {
+      if (!(node instanceof Element)) return;
+      if (node.classList.contains('animate-on-scroll')) {
+        observe(node);
+      }
+      node.querySelectorAll<Element>('.animate-on-scroll').forEach(observe);
+    }
+
+    function handleMutation(mutation: MutationRecord) {
+      mutation.addedNodes.forEach(handleAddedNode);
+    }
+
     const mutationObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (!(node instanceof Element)) return;
-          if (node.classList.contains('animate-on-scroll')) {
-            observe(node);
-          }
-          node.querySelectorAll<Element>('.animate-on-scroll').forEach(observe);
-        });
-      });
+      mutations.forEach(handleMutation);
     });
 
     mutationObserver.observe(document.body, { childList: true, subtree: true });
