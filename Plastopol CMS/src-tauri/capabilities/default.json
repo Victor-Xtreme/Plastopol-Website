@@ -8,13 +8,12 @@
     "dialog:allow-open",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
-    "fs:allow-create-dir",
+    "fs:allow-mkdir",
     "fs:allow-read-dir",
     "fs:allow-copy-file",
-    "fs:allow-remove-file",
+    "fs:allow-remove",
     "fs:allow-rename",
     "fs:allow-exists",
-    "shell:allow-execute",
-    "opener:default"
+    "shell:allow-execute"
   ]
 }
