@@ -2,10 +2,11 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::PathBuf;
 use chrono::Local;
+use tauri::Manager;
 use tauri::AppHandle;
 
 fn log_path(app: &AppHandle) -> PathBuf {
-    app.path_resolver()
+    app.path()
         .app_data_dir()
         .expect("failed to get app data dir")
         .join("cms-logs.txt")

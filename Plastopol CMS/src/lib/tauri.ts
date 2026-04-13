@@ -12,8 +12,8 @@ export async function saveConfig(config: CmsConfig): Promise<void> {
   return invoke("save_config", { config });
 }
 
-export async function gitPull(repoPath: string): Promise<string> {
-  return invoke("git_pull", { repoPath });
+export async function gitPull(repoPath: string, selectedBranch : string): Promise<string> {
+  return invoke("git_pull", { repoPath: repoPath, branch: selectedBranch });
 }
 
 export async function gitCommitPush(
@@ -36,8 +36,8 @@ export async function gitLog(repoPath: string): Promise<CommitEntry[]> {
   return invoke("git_log", { repoPath });
 }
 
-export async function gitRevertLast(repoPath: string): Promise<string> {
-  return invoke("git_revert_last", { repoPath });
+export async function gitRevertLast(repoPath: string, selectedBranch : string): Promise<string> {
+  return invoke("git_revert_last", { repoPath: repoPath, branch: selectedBranch });
 }
 
 export async function readProducts(repoPath: string): Promise<string> {

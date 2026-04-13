@@ -1,4 +1,5 @@
 // src-tauri/src/commands/git.rs
+
 use serde::{Deserialize, Serialize};
 use std::process::Command;
 
@@ -16,9 +17,27 @@ fn run_git(repo: &str, args: &[&str]) -> Result<String, String> {
     }
 }
 
+/// Check if a branch exists locally
+fn branch_exists(repo: &str, branch: &str) -> bool {
+    run_git(repo, &["rev-parse", "--verify", branch]).is_ok()
+}
+
+/// Ensure branch exists and is checked out
+fn ensure_branch(repo: &str, branch: &str) -> Result<(), String> {
+    if branch_exists(repo, branch) {
+        // Switch to existing branch
+        run_git(repo, &["checkout", branch])?;
+    } else {
+        // Create and switch to new branch
+        run_git(repo, &["checkout", "-b", branch])?;
+    }
+    Ok(())
+}
+
 #[tauri::command]
-pub fn git_pull(repo_path: String) -> Result<String, String> {
-    run_git(&repo_path, &["pull"])
+pub fn git_pull(repo_path: String, branch: String) -> Result<String, String> {
+    ensure_branch(&repo_path, &branch)?;
+    run_git(&repo_path, &["pull", "origin", &branch])
 }
 
 #[tauri::command]
@@ -27,13 +46,20 @@ pub fn git_commit_push(
     message: String,
     branch: String,
 ) -> Result<String, String> {
+    // Ensure correct branch
+    ensure_branch(&repo_path, &branch)?;
+
+    // Stage changes
     run_git(&repo_path, &["add", "."])?;
+
+    // Commit (ignore empty commit error)
     let _ = run_git(&repo_path, &["commit", "-m", &message]);
-    run_git(&repo_path, &["push", "origin", &branch])
+
+    // Push branch (set upstream if needed)
+    run_git(&repo_path, &["push", "-u", "origin", &branch])
 }
 
-/// Push to the preview branch for Cloudflare Pages preview deployments.
-/// Force-pushes so the preview branch never accumulates history.
+/// Push to preview branch (force push, does NOT switch branch)
 #[tauri::command]
 pub fn git_preview_push(
     repo_path: String,
@@ -41,11 +67,22 @@ pub fn git_preview_push(
     preview_branch: String,
 ) -> Result<String, String> {
     let message = format!("preview: {}", product_name);
+
     run_git(&repo_path, &["add", "."])?;
-    // Commit may be empty if nothing changed — that's fine
+
+    // Commit may fail if nothing changed — ignore
     let _ = run_git(&repo_path, &["commit", "-m", &message]);
-    // Force push so the preview branch stays clean
-    run_git(&repo_path, &["push", "origin", &format!("HEAD:{}", preview_branch), "--force"])
+
+    // Force push current HEAD → preview branch
+    run_git(
+        &repo_path,
+        &[
+            "push",
+            "origin",
+            &format!("HEAD:{}", preview_branch),
+            "--force",
+        ],
+    )
 }
 
 #[derive(Serialize, Deserialize)]
@@ -61,6 +98,7 @@ pub fn git_log(repo_path: String) -> Result<Vec<CommitEntry>, String> {
         &repo_path,
         &["log", "--format=%H|%s|%cd", "--date=short", "-20"],
     )?;
+
     let entries = raw
         .lines()
         .filter_map(|line| {
@@ -76,10 +114,12 @@ pub fn git_log(repo_path: String) -> Result<Vec<CommitEntry>, String> {
             }
         })
         .collect();
+
     Ok(entries)
 }
 
 #[tauri::command]
-pub fn git_revert_last(repo_path: String) -> Result<String, String> {
+pub fn git_revert_last(repo_path: String, branch: String) -> Result<String, String> {
+    ensure_branch(&repo_path, &branch)?;
     run_git(&repo_path, &["revert", "--no-edit", "HEAD"])
 }
