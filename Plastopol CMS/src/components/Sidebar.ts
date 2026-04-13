@@ -3,10 +3,11 @@
 import { state, setSelectedId, subscribe } from "../lib/store";
 import { searchProducts, highlightText } from "../lib/search";
 import type { Product } from "../lib/types";
+import { cmsLog } from "../lib/logger";
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "#22c55e",
-  draft: "#f59e0b",
+  active:   "#16a34a",
+  draft:    "#d97706",
   archived: "#6b7280",
 };
 
@@ -27,13 +28,17 @@ export function renderSidebar(container: HTMLElement) {
 
   searchInput.addEventListener("input", () => renderList(searchInput.value));
   addBtn.addEventListener("click", () => {
+    cmsLog("Sidebar", "+ button clicked — dispatching cms:add-product");
     document.dispatchEvent(new CustomEvent("cms:add-product"));
   });
 
-  subscribe(() => renderList(searchInput.value));
+  subscribe((newState) => {
+    cmsLog("Sidebar", "store notify — products:", newState.products.length, "selectedId:", newState.selectedId ?? "null");
+    renderList(searchInput.value);
+  });
+
   renderList("");
 
-  // Keyboard shortcut: Ctrl+F focuses search
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "f") {
       e.preventDefault();
@@ -47,6 +52,7 @@ function renderList(query: string) {
   if (!list) return;
 
   const matches = searchProducts(state.products, query);
+  cmsLog("Sidebar", "renderList — state.products:", state.products.length, "matches:", matches.length, "query:", JSON.stringify(query));
 
   if (matches.length === 0) {
     list.innerHTML = `<div class="empty-state">No products found</div>`;
@@ -54,19 +60,32 @@ function renderList(query: string) {
   }
 
   list.innerHTML = matches
-    .map(({ product, fields }) => renderItem(product, query, fields))
+    .map(({ product }) => renderItem(product, query))
     .join("");
 
   list.querySelectorAll<HTMLElement>("[data-id]").forEach((el) => {
-    el.addEventListener("click", () => setSelectedId(el.dataset.id!));
-    wireHoverActions(el);
+    el.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest(".item-actions")) return;
+      const id = el.dataset.id!;
+      cmsLog("Sidebar", "row clicked, id:", id);
+      setSelectedId(id);
+    });
+
+    el.querySelectorAll<HTMLButtonElement>("[data-action]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const { action, id } = btn.dataset as { action: string; id: string };
+        cmsLog("Sidebar", "action btn clicked:", action, "id:", id);
+        document.dispatchEvent(new CustomEvent(`cms:${action}-product`, { detail: { id } }));
+      });
+    });
   });
 }
 
-function renderItem(product: Product, query: string, fields: string[]): string {
+function renderItem(product: Product, query: string): string {
   const active = state.selectedId === product.id ? "selected" : "";
-  const color = STATUS_COLORS[product.status] ?? "#6b7280";
-  const name = highlightText(product.modelName || "(Unnamed)", query);
+  const color  = STATUS_COLORS[product.status] ?? "#6b7280";
+  const name   = highlightText(product.modelName || "(Unnamed)", query);
 
   return `
     <div class="product-item ${active}" data-id="${product.id}">
@@ -75,25 +94,10 @@ function renderItem(product: Product, query: string, fields: string[]): string {
         <span class="status-dot" style="background:${color}" title="${product.status}"></span>
       </div>
       <div class="product-item-sub">${product.category} · ${product.status}</div>
-      <div class="item-actions" hidden>
+      <div class="item-actions">
         <button class="action-btn" data-action="edit" data-id="${product.id}">Edit</button>
         <button class="action-btn danger" data-action="delete" data-id="${product.id}">Delete</button>
       </div>
     </div>
   `;
-}
-
-function wireHoverActions(el: HTMLElement) {
-  const actions = el.querySelector<HTMLElement>(".item-actions")!;
-  el.addEventListener("mouseenter", () => (actions.hidden = false));
-  el.addEventListener("mouseleave", () => (actions.hidden = true));
-
-  actions.querySelectorAll<HTMLButtonElement>("[data-action]").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const action = btn.dataset.action!;
-      const id = btn.dataset.id!;
-      document.dispatchEvent(new CustomEvent(`cms:${action}-product`, { detail: { id } }));
-    });
-  });
 }

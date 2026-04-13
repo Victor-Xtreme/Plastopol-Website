@@ -1,7 +1,7 @@
 // src/lib/autosave.ts
 // Debounced autosave to products.json. Does NOT git commit.
 
-import { state, setBuildStatus } from "./store";
+import { state } from "./store";
 import { writeProducts } from "./tauri";
 
 let timer: ReturnType<typeof setTimeout> | null = null;

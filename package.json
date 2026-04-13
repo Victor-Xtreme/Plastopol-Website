@@ -4,5 +4,8 @@
     "scripts": {
         "web": "cd website && npm run dev",
         "build": "cd website && npm run build"
+    },
+    "dependencies": {
+        "@tauri-apps/api": "^2.10.1"
     }
 }
