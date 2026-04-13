@@ -27,7 +27,8 @@ pub fn git_commit_push(
     branch: String,
 ) -> Result<String, String> {
     run_git(&repo_path, &["add", "."])?;
-    run_git(&repo_path, &["commit", "-m", &message])?;
+    // If nothing to commit, that's fine — still try push
+    let _ = run_git(&repo_path, &["commit", "-m", &message]);
     run_git(&repo_path, &["push", "origin", &branch])
 }
 
@@ -42,7 +43,7 @@ pub struct CommitEntry {
 pub fn git_log(repo_path: String) -> Result<Vec<CommitEntry>, String> {
     let raw = run_git(
         &repo_path,
-        &["log", "--oneline", "--format=%H|%s|%cd", "--date=short", "-20"],
+        &["log", "--format=%H|%s|%cd", "--date=short", "-20"],
     )?;
     let entries = raw
         .lines()

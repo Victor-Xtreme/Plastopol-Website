@@ -4,7 +4,7 @@
 import type { Product } from "../lib/types";
 import { upsertProduct, getSelected, subscribe, state } from "../lib/store";
 import { scheduleAutosave, markUnsaved } from "../lib/autosave";
-import { validateProduct } from "../lib/product";
+import { validateProduct, generateUniqueSlug } from "../lib/product";
 import { renderEditorFields, readEditorFields } from "./EditorFields";
 import { renderEditorLists, readEditorLists } from "./EditorLists";
 import { renderImageManager } from "./ImageManager";
@@ -53,9 +53,8 @@ function renderEditor(container: HTMLElement, product: Product) {
   renderEditorLists(listsEl, draft);
   renderImageManager(imagesEl, draft);
 
-  // Collect changes from all sub-editors
   container.addEventListener("fields:change", () => {
-    Object.assign(draft, readEditorFields(fieldsEl, draft));
+    Object.assign(draft, readEditorFields(fieldsEl));
     onDraftChange();
   });
   container.addEventListener("lists:change", () => {
@@ -70,8 +69,7 @@ function renderEditor(container: HTMLElement, product: Product) {
   });
 
   container.querySelector("#btn-save-product")!.addEventListener("click", () => {
-    // Collect latest from all panels before saving
-    Object.assign(draft, readEditorFields(fieldsEl, draft));
+    Object.assign(draft, readEditorFields(fieldsEl));
     Object.assign(draft, readEditorLists(listsEl));
     saveProduct(container, draft);
   });
@@ -83,6 +81,14 @@ function onDraftChange() {
 }
 
 function saveProduct(container: HTMLElement, draft: Product) {
+  // Resolve slug uniqueness before validation — user never sees the slug,
+  // so we silently correct duplicates (e.g. two products with the same name
+  // get slugs "chair-name" and "chair-name-2").
+  const otherSlugs = state.products
+    .filter((p) => p.id !== draft.id)
+    .map((p) => p.slug);
+  draft.slug = generateUniqueSlug(draft.modelName, otherSlugs);
+
   const errors = validateProduct(draft, state.products);
   const errEl = container.querySelector<HTMLElement>("#validation-errors")!;
 

@@ -1,9 +1,9 @@
 // src/lib/tauri.ts
-// Typed wrappers around Tauri's invoke() so the rest of the app
-// never imports @tauri-apps/api directly.
+// Typed wrappers around Tauri v2 invoke() — rest of app never
+// imports @tauri-apps/api directly.
 
-import { invoke } from "@tauri-apps/api/tauri";
-import { open as dialogOpen } from "@tauri-apps/api/dialog";
+import { invoke } from "@tauri-apps/api/core";
+import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
 import type { CmsConfig, CommitEntry } from "./types";
 
 export async function getConfig(): Promise<CmsConfig> {

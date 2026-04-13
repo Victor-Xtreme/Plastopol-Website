@@ -23,12 +23,12 @@ export function renderEditorLists(container: HTMLElement, product: Product) {
   renderFeatures(container, product.features);
   renderSpecs(container, product.specifications);
 
-  container.querySelector("#add-feature")?.addEventListener("click", () => {
+  container.querySelector("#add-feature")!.addEventListener("click", () => {
     appendFeatureRow(container, "");
     emitChange(container);
   });
 
-  container.querySelector("#add-spec")?.addEventListener("click", () => {
+  container.querySelector("#add-spec")!.addEventListener("click", () => {
     appendSpecRow(container, { key: "", value: "" });
     emitChange(container);
   });
@@ -48,11 +48,11 @@ function appendFeatureRow(container: HTMLElement, value: string) {
     <input class="input flex-1 feature-input" value="${esc(value)}" placeholder="Feature description" />
     <button class="btn-remove" title="Remove">✕</button>
   `;
-  row.querySelector(".btn-remove")?.addEventListener("click", () => {
+  row.querySelector(".btn-remove")!.addEventListener("click", () => {
     row.remove();
     emitChange(container);
   });
-  row.querySelector("input")?.addEventListener("input", () => emitChange(container));
+  row.querySelector("input")!.addEventListener("input", () => emitChange(container));
   list.appendChild(row);
 }
 
@@ -71,7 +71,7 @@ function appendSpecRow(container: HTMLElement, spec: Specification) {
     <input class="input flex-1 spec-val" value="${esc(spec.value)}" placeholder="Value" />
     <button class="btn-remove" title="Remove">✕</button>
   `;
-  row.querySelector(".btn-remove")?.addEventListener("click", () => {
+  row.querySelector(".btn-remove")!.addEventListener("click", () => {
     row.remove();
     emitChange(container);
   });
@@ -101,5 +101,5 @@ function emitChange(container: HTMLElement) {
 }
 
 function esc(s: string): string {
-  return s.replaceAll('"', "&quot;").replaceAll("<", "&lt;");
+  return s.replace(/"/g, "&quot;").replace(/</g, "&lt;");
 }

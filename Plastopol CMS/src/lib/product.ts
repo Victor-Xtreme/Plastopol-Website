@@ -11,6 +11,29 @@ export function slugify(text: string): string {
     .replace(/-+/g, "-");
 }
 
+export function generateUniqueSlug(
+  name: string,
+  existingSlugs: string[]
+): string {
+  const baseSlug = slugify(name);
+
+  // If no conflict → return immediately
+  if (!existingSlugs.includes(baseSlug)) {
+    return baseSlug;
+  }
+
+  let counter = 2;
+  let newSlug = `${baseSlug}-${counter}`;
+
+  // Keep incrementing until unique
+  while (existingSlugs.includes(newSlug)) {
+    counter++;
+    newSlug = `${baseSlug}-${counter}`;
+  }
+
+  return newSlug;
+}
+
 export function generateId(): string {
   return "chair-" + Math.random().toString(36).slice(2, 7);
 }

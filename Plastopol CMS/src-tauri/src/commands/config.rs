@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
-use tauri::api::path::app_data_dir;
-use tauri::Config;
+use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CmsConfig {
@@ -18,15 +17,16 @@ impl Default for CmsConfig {
     }
 }
 
-fn config_path(config: &Config) -> std::path::PathBuf {
-    app_data_dir(config)
-        .unwrap_or_else(|| std::path::PathBuf::from("."))
+fn config_path(app: &tauri::AppHandle) -> std::path::PathBuf {
+    app.path()
+        .app_data_dir()
+        .unwrap_or_else(|_| std::path::PathBuf::from("."))
         .join("cms_config.json")
 }
 
 #[tauri::command]
-pub fn get_config(app_handle: tauri::AppHandle) -> Result<CmsConfig, String> {
-    let path = config_path(app_handle.config().as_ref());
+pub fn get_config(app: tauri::AppHandle) -> Result<CmsConfig, String> {
+    let path = config_path(&app);
     if !path.exists() {
         return Ok(CmsConfig::default());
     }
@@ -35,8 +35,8 @@ pub fn get_config(app_handle: tauri::AppHandle) -> Result<CmsConfig, String> {
 }
 
 #[tauri::command]
-pub fn save_config(app_handle: tauri::AppHandle, config: CmsConfig) -> Result<(), String> {
-    let path = config_path(app_handle.config().as_ref());
+pub fn save_config(app: tauri::AppHandle, config: CmsConfig) -> Result<(), String> {
+    let path = config_path(&app);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }

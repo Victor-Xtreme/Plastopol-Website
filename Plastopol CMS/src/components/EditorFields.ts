@@ -59,8 +59,11 @@ export function renderEditorFields(container: HTMLElement, product: Product) {
     </div>
   `;
 
-  // Auto-generate slug from name (until user manually edits slug)
-  let slugLocked = product.slug !== "" && product.slug !== slugify(product.modelName);
+  // Slug is "locked" if it exists and doesn't match what auto-generation
+  // would have produced — meaning the user has manually edited it.
+  let slugLocked =
+    product.slug !== "" && product.slug !== slugify(product.modelName);
+
   const nameInput = container.querySelector<HTMLInputElement>("#f-name")!;
   const slugInput = container.querySelector<HTMLInputElement>("#f-slug")!;
 
@@ -80,18 +83,18 @@ export function renderEditorFields(container: HTMLElement, product: Product) {
   });
 }
 
-export function readEditorFields(container: HTMLElement, base: Product): Partial<Product> {
+export function readEditorFields(container: HTMLElement): Partial<Product> {
   const v = <T extends HTMLElement>(id: string) => container.querySelector<T>(id)!;
   return {
-    modelName: v<HTMLInputElement>("#f-name").value.trim(),
-    slug:      v<HTMLInputElement>("#f-slug").value.trim(),
-    status:    v<HTMLSelectElement>("#f-status").value as Product["status"],
-    category:  v<HTMLSelectElement>("#f-category").value as Product["category"],
-    leadTime:  v<HTMLInputElement>("#f-lead").value.trim(),
-    inStock:   v<HTMLInputElement>("#f-instock").checked,
+    modelName:   v<HTMLInputElement>("#f-name").value.trim(),
+    slug:        v<HTMLInputElement>("#f-slug").value.trim(),
+    status:      v<HTMLSelectElement>("#f-status").value as Product["status"],
+    category:    v<HTMLSelectElement>("#f-category").value as Product["category"],
+    leadTime:    v<HTMLInputElement>("#f-lead").value.trim(),
+    inStock:     v<HTMLInputElement>("#f-instock").checked,
     description: v<HTMLTextAreaElement>("#f-desc").value.trim(),
-    colors: splitTrim(v<HTMLInputElement>("#f-colors").value),
-    tags:   splitTrim(v<HTMLInputElement>("#f-tags").value),
+    colors:      splitTrim(v<HTMLInputElement>("#f-colors").value),
+    tags:        splitTrim(v<HTMLInputElement>("#f-tags").value),
   };
 }
 

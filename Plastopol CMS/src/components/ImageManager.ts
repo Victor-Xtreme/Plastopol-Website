@@ -52,7 +52,7 @@ function renderGrid(container: HTMLElement, product: Product) {
         <button class="btn-sm danger" data-action="delete" data-idx="${idx}">✕</button>
       </div>
     `;
-    card.querySelector("[data-action='thumb']")?.addEventListener("click", () => {
+    card.querySelector("[data-action='thumb']")!.addEventListener("click", () => {
       product.thumbnail = filename;
       emitChange(container, product);
       renderGrid(container, product);

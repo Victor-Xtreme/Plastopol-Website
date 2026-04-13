@@ -28,10 +28,10 @@ export function mountHistoryModal(appRoot: HTMLElement) {
   `;
   appRoot.appendChild(modal);
 
-  modal.querySelector("#history-close")?.addEventListener("click", hide);
-  modal.querySelector(".modal-backdrop")?.addEventListener("click", hide);
-  modal.querySelector("#btn-refresh-log")?.addEventListener("click", load);
-  modal.querySelector("#btn-revert")?.addEventListener("click", onRevert);
+  modal.querySelector("#history-close")!.addEventListener("click", hide);
+  modal.querySelector(".modal-backdrop")!.addEventListener("click", hide);
+  modal.querySelector("#btn-refresh-log")!.addEventListener("click", load);
+  modal.querySelector("#btn-revert")!.addEventListener("click", onRevert);
 
   document.addEventListener("cms:show-history", () => show());
 }
@@ -94,5 +94,5 @@ async function onRevert() {
 }
 
 function escHtml(s: string): string {
-  return s.replace("&", "&amp;").replaceAll("<", "&lt;");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 }

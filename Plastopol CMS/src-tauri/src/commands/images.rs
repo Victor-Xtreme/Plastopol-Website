@@ -8,8 +8,6 @@ fn images_dir(repo_path: &str) -> PathBuf {
         .join("products")
 }
 
-/// Copies an image from any source path into the products image directory,
-/// renaming it to the given filename (e.g. "chair-001.jpg").
 #[tauri::command]
 pub fn copy_image(
     repo_path: String,
@@ -24,7 +22,6 @@ pub fn copy_image(
         .map_err(|e| format!("Copy failed: {}", e))
 }
 
-/// Deletes a named image file from the products image directory.
 #[tauri::command]
 pub fn delete_image(repo_path: String, filename: String) -> Result<(), String> {
     let path = images_dir(&repo_path).join(&filename);
@@ -35,21 +32,19 @@ pub fn delete_image(repo_path: String, filename: String) -> Result<(), String> {
     }
 }
 
-/// Lists all image filenames in the products image directory.
 #[tauri::command]
 pub fn list_images(repo_path: String) -> Result<Vec<String>, String> {
     let dir = images_dir(&repo_path);
     if !dir.exists() {
         return Ok(vec![]);
     }
-    let entries = fs::read_dir(&dir).map_err(|e| e.to_string())?;
-    let mut names: Vec<String> = entries
+    let mut names: Vec<String> = fs::read_dir(&dir)
+        .map_err(|e| e.to_string())?
         .filter_map(|e| {
-            let entry = e.ok()?;
-            let name = entry.file_name().to_string_lossy().to_string();
-            // Only image files
-            if name.ends_with(".jpg") || name.ends_with(".jpeg")
-                || name.ends_with(".png") || name.ends_with(".webp")
+            let name = e.ok()?.file_name().to_string_lossy().to_string();
+            let ext = name.to_lowercase();
+            if ext.ends_with(".jpg") || ext.ends_with(".jpeg")
+                || ext.ends_with(".png") || ext.ends_with(".webp")
             {
                 Some(name)
             } else {

@@ -8,7 +8,7 @@ export async function mountConfigModal(appRoot: HTMLElement): Promise<void> {
   const modal = document.createElement("div");
   modal.id = "config-modal";
   modal.className = "modal hidden";
-  modal.innerHTML = String.raw`
+  modal.innerHTML = `
     <div class="modal-backdrop"></div>
     <div class="modal-box">
       <div class="modal-header">
@@ -19,7 +19,7 @@ export async function mountConfigModal(appRoot: HTMLElement): Promise<void> {
         <div class="field-group">
           <label>Website Repo Path</label>
           <div class="input-row">
-            <input id="cfg-repo" class="input flex-1" placeholder="C:\Users\...\Plastopol-Website-main" />
+            <input id="cfg-repo" class="input flex-1" placeholder="C:\\Users\\...\\Plastopol-Website-main" />
             <button class="btn secondary" id="cfg-browse">Browse…</button>
           </div>
         </div>
@@ -36,19 +36,16 @@ export async function mountConfigModal(appRoot: HTMLElement): Promise<void> {
   `;
   appRoot.appendChild(modal);
 
-  modal.querySelector("#cfg-browse")?.addEventListener("click", async () => {
+  modal.querySelector("#cfg-browse")!.addEventListener("click", async () => {
     const folder = await pickFolder();
     if (folder) {
-      const repoEl = modal.querySelector<HTMLInputElement>("#cfg-repo");
-      if (repoEl) {
-        repoEl.value = folder;
-      }
+      (modal.querySelector<HTMLInputElement>("#cfg-repo")!).value = folder;
     }
   });
 
-  modal.querySelector("#cfg-save")?.addEventListener("click", () => onSave(modal));
-  modal.querySelector("#config-close")?.addEventListener("click", () => hide(modal));
-  modal.querySelector(".modal-backdrop")?.addEventListener("click", () => hide(modal));
+  modal.querySelector("#cfg-save")!.addEventListener("click", () => onSave(modal));
+  modal.querySelector("#config-close")!.addEventListener("click", () => hide(modal));
+  modal.querySelector(".modal-backdrop")!.addEventListener("click", () => hide(modal));
 
   document.addEventListener("cms:open-settings", () => showWithCurrent(modal));
 
@@ -75,10 +72,8 @@ async function showWithCurrent(modal: HTMLElement) {
 }
 
 function showWithValues(modal: HTMLElement, cfg: CmsConfig) {
-  const repoEl = modal.querySelector<HTMLInputElement>("#cfg-repo");
-  const branchEl = modal.querySelector<HTMLInputElement>("#cfg-branch");
-  if (repoEl) repoEl.value = cfg.repo_path;
-  if (branchEl) branchEl.value = cfg.default_branch;
+  (modal.querySelector<HTMLInputElement>("#cfg-repo")!).value = cfg.repo_path;
+  (modal.querySelector<HTMLInputElement>("#cfg-branch")!).value = cfg.default_branch;
   modal.classList.remove("hidden");
 }
 
@@ -88,19 +83,17 @@ function hide(modal: HTMLElement) {
 }
 
 async function onSave(modal: HTMLElement) {
-  const repo = modal.querySelector<HTMLInputElement>("#cfg-repo")?.value.trim();
-  const branch = modal.querySelector<HTMLInputElement>("#cfg-branch")?.value.trim() || "main";
-  const errEl = modal.querySelector<HTMLElement>("#cfg-error");
+  const repo = modal.querySelector<HTMLInputElement>("#cfg-repo")!.value.trim();
+  const branch = modal.querySelector<HTMLInputElement>("#cfg-branch")!.value.trim() || "main";
+  const errEl = modal.querySelector<HTMLElement>("#cfg-error")!;
 
   if (!repo) {
-    if (errEl) {
-      errEl.textContent = "Repo path is required.";
-      errEl.classList.remove("hidden");
-    }
+    errEl.textContent = "Repo path is required.";
+    errEl.classList.remove("hidden");
     return;
   }
 
-  errEl?.classList.add("hidden");
+  errEl.classList.add("hidden");
   const cfg: CmsConfig = { repo_path: repo, default_branch: branch };
 
   try {
@@ -109,9 +102,7 @@ async function onSave(modal: HTMLElement) {
     modal.classList.add("hidden");
     document.dispatchEvent(new CustomEvent("cms:config-saved", { detail: cfg }));
   } catch (err) {
-    if (errEl) {
-      errEl.textContent = "Failed to save: " + err;
-      errEl.classList.remove("hidden");
-    }
+    errEl.textContent = "Failed to save: " + err;
+    errEl.classList.remove("hidden");
   }
 }

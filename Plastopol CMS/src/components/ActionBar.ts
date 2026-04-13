@@ -1,7 +1,7 @@
 // src/components/ActionBar.ts
 
 import { state, subscribe, setBuildStatus } from "../lib/store";
-import { gitCommitPush, gitPull, gitLog, writeProducts } from "../lib/tauri";
+import { gitCommitPush, gitPull, writeProducts } from "../lib/tauri";
 import { validateProduct } from "../lib/product";
 
 export function renderActionBar(container: HTMLElement) {
@@ -21,9 +21,9 @@ export function renderActionBar(container: HTMLElement) {
     </div>
   `;
 
-  document.getElementById("btn-build")?.addEventListener("click", onBuild);
-  document.getElementById("btn-pull")?.addEventListener("click", onPull);
-  document.getElementById("btn-history")?.addEventListener("click", () => {
+  document.getElementById("btn-build")!.addEventListener("click", onBuild);
+  document.getElementById("btn-pull")!.addEventListener("click", onPull);
+  document.getElementById("btn-history")!.addEventListener("click", () => {
     document.dispatchEvent(new CustomEvent("cms:show-history"));
   });
 
