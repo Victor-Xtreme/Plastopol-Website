@@ -1,9 +1,10 @@
 // src/components/ImageManager.ts
 
 import type { Product } from "../lib/types";
-import { copyImage, deleteImage } from "../lib/tauri";
+import { writeImageBytes, deleteImage } from "../lib/tauri";
 import { makeImageFilename } from "../lib/product";
 import { state } from "../lib/store";
+import { cmsLog, cmsErr } from "../lib/logger";
 
 export function renderImageManager(container: HTMLElement, product: Product) {
   container.innerHTML = `
@@ -89,12 +90,17 @@ async function handleFiles(container: HTMLElement, product: Product, files: File
     if (!file.type.startsWith("image/")) continue;
     const idx = product.images.length;
     const filename = makeImageFilename(product.slug || "product", idx);
-    // @ts-ignore — Tauri gives us the real path via the File object
-    const sourcePath: string = (file as any).path ?? "";
-    if (!sourcePath) { alert("Cannot read file path. Try drag from Explorer."); continue; }
-    await copyImage(repoPath, sourcePath, filename);
-    product.images.push(filename);
-    if (!product.thumbnail) product.thumbnail = filename;
+    cmsLog("ImageManager", "writing image:", filename, "size:", file.size);
+    try {
+      // Use base64 transfer — works in Tauri v2 where File.path is unavailable
+      await writeImageBytes(repoPath, filename, file);
+      product.images.push(filename);
+      if (!product.thumbnail) product.thumbnail = filename;
+      cmsLog("ImageManager", "image written OK:", filename);
+    } catch (err) {
+      cmsErr("ImageManager", "failed to write image:", filename, String(err));
+      alert(`Failed to save image ${filename}:\n${err}`);
+    }
   }
 
   emitChange(container, product);

@@ -29,6 +29,8 @@ export interface Product {
 export interface CmsConfig {
   repo_path: string;
   default_branch: string;
+  preview_branch: string;
+  cloudflare_project: string;  // e.g. "plastopol-website"
 }
 
 export interface CommitEntry {
@@ -38,6 +40,7 @@ export interface CommitEntry {
 }
 
 export type BuildStatus = "idle" | "building" | "success" | "error";
+export type PreviewStatus = "idle" | "pushing" | "building" | "ready" | "error";
 
 export interface AppState {
   config: CmsConfig | null;
@@ -46,4 +49,6 @@ export interface AppState {
   unsaved: boolean;
   buildStatus: BuildStatus;
   buildMessage: string;
+  previewStatus: PreviewStatus;
+  previewUrl: string;
 }

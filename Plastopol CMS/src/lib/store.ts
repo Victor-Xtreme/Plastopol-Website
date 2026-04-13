@@ -1,7 +1,6 @@
 // src/lib/store.ts
-// Simple observable store — no framework dependency.
 
-import type { AppState, Product, CmsConfig, BuildStatus } from "./types";
+import type { AppState, Product, CmsConfig, BuildStatus, PreviewStatus } from "./types";
 
 type Listener = (state: AppState) => void;
 
@@ -14,6 +13,8 @@ export const state: AppState = {
   unsaved: false,
   buildStatus: "idle",
   buildMessage: "",
+  previewStatus: "idle",
+  previewUrl: "",
 };
 
 export function subscribe(fn: Listener): () => void {
@@ -51,6 +52,12 @@ export function setUnsaved(v: boolean) {
 export function setBuildStatus(status: BuildStatus, message = "") {
   state.buildStatus = status;
   state.buildMessage = message;
+  notify();
+}
+
+export function setPreviewStatus(status: PreviewStatus, url = "") {
+  state.previewStatus = status;
+  state.previewUrl = url;
   notify();
 }
 

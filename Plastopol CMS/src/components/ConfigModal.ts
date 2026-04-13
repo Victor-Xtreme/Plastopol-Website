@@ -24,8 +24,16 @@ export async function mountConfigModal(appRoot: HTMLElement): Promise<void> {
           </div>
         </div>
         <div class="field-group">
-          <label>Default Branch</label>
+          <label>Production Branch</label>
           <input id="cfg-branch" class="input" value="main" />
+        </div>
+        <div class="field-group">
+          <label>Preview Branch <span class="hint">(pushed on Preview click)</span></label>
+          <input id="cfg-preview-branch" class="input" value="cms-preview" />
+        </div>
+        <div class="field-group">
+          <label>Cloudflare Project Name <span class="hint">(for preview URL)</span></label>
+          <input id="cfg-cf-project" class="input" placeholder="plastopol-website" />
         </div>
         <p id="cfg-error" class="error-msg hidden"></p>
       </div>
@@ -49,7 +57,6 @@ export async function mountConfigModal(appRoot: HTMLElement): Promise<void> {
 
   document.addEventListener("cms:open-settings", () => showWithCurrent(modal));
 
-  // Auto-show on launch if no config
   await autoShowIfNeeded(modal);
 }
 
@@ -62,30 +69,33 @@ async function autoShowIfNeeded(modal: HTMLElement) {
       setConfig(cfg);
     }
   } catch {
-    showWithValues(modal, { repo_path: "", default_branch: "main" });
+    showWithValues(modal, { repo_path: "", default_branch: "main", preview_branch: "cms-preview", cloudflare_project: "" });
   }
 }
 
 async function showWithCurrent(modal: HTMLElement) {
-  const cfg = state.config ?? { repo_path: "", default_branch: "main" };
+  const cfg = state.config ?? { repo_path: "", default_branch: "main", preview_branch: "cms-preview", cloudflare_project: "" };
   showWithValues(modal, cfg);
 }
 
 function showWithValues(modal: HTMLElement, cfg: CmsConfig) {
   (modal.querySelector<HTMLInputElement>("#cfg-repo")!).value = cfg.repo_path;
   (modal.querySelector<HTMLInputElement>("#cfg-branch")!).value = cfg.default_branch;
+  (modal.querySelector<HTMLInputElement>("#cfg-preview-branch")!).value = cfg.preview_branch || "cms-preview";
+  (modal.querySelector<HTMLInputElement>("#cfg-cf-project")!).value = cfg.cloudflare_project || "";
   modal.classList.remove("hidden");
 }
 
 function hide(modal: HTMLElement) {
-  // Only allow closing if config already exists
   if (state.config?.repo_path) modal.classList.add("hidden");
 }
 
 async function onSave(modal: HTMLElement) {
-  const repo = modal.querySelector<HTMLInputElement>("#cfg-repo")!.value.trim();
-  const branch = modal.querySelector<HTMLInputElement>("#cfg-branch")!.value.trim() || "main";
-  const errEl = modal.querySelector<HTMLElement>("#cfg-error")!;
+  const repo          = modal.querySelector<HTMLInputElement>("#cfg-repo")!.value.trim();
+  const branch        = modal.querySelector<HTMLInputElement>("#cfg-branch")!.value.trim() || "main";
+  const previewBranch = modal.querySelector<HTMLInputElement>("#cfg-preview-branch")!.value.trim() || "cms-preview";
+  const cfProject     = modal.querySelector<HTMLInputElement>("#cfg-cf-project")!.value.trim();
+  const errEl         = modal.querySelector<HTMLElement>("#cfg-error")!;
 
   if (!repo) {
     errEl.textContent = "Repo path is required.";
@@ -94,7 +104,7 @@ async function onSave(modal: HTMLElement) {
   }
 
   errEl.classList.add("hidden");
-  const cfg: CmsConfig = { repo_path: repo, default_branch: branch };
+  const cfg: CmsConfig = { repo_path: repo, default_branch: branch, preview_branch: previewBranch, cloudflare_project: cfProject };
 
   try {
     await saveConfig(cfg);

@@ -1,5 +1,7 @@
+// src-tauri/src/commands/images.rs
 use std::fs;
 use std::path::PathBuf;
+use base64::{Engine as _, engine::general_purpose};
 
 fn images_dir(repo_path: &str) -> PathBuf {
     PathBuf::from(repo_path)
@@ -20,6 +22,25 @@ pub fn copy_image(
     fs::copy(&source_path, &dest)
         .map(|_| ())
         .map_err(|e| format!("Copy failed: {}", e))
+}
+
+/// Accepts a base64-encoded image from the JS side (Tauri v2 — File.path not available in webview)
+#[tauri::command]
+pub fn write_image_bytes(
+    repo_path: String,
+    filename: String,
+    base64_data: String,
+) -> Result<(), String> {
+    let dest_dir = images_dir(&repo_path);
+    fs::create_dir_all(&dest_dir).map_err(|e| e.to_string())?;
+    let dest = dest_dir.join(&filename);
+
+    let bytes = general_purpose::STANDARD
+        .decode(&base64_data)
+        .map_err(|e| format!("Base64 decode failed: {}", e))?;
+
+    fs::write(&dest, &bytes)
+        .map_err(|e| format!("Write failed: {}", e))
 }
 
 #[tauri::command]

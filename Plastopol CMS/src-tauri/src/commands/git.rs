@@ -1,3 +1,4 @@
+// src-tauri/src/commands/git.rs
 use serde::{Deserialize, Serialize};
 use std::process::Command;
 
@@ -27,9 +28,24 @@ pub fn git_commit_push(
     branch: String,
 ) -> Result<String, String> {
     run_git(&repo_path, &["add", "."])?;
-    // If nothing to commit, that's fine — still try push
     let _ = run_git(&repo_path, &["commit", "-m", &message]);
     run_git(&repo_path, &["push", "origin", &branch])
+}
+
+/// Push to the preview branch for Cloudflare Pages preview deployments.
+/// Force-pushes so the preview branch never accumulates history.
+#[tauri::command]
+pub fn git_preview_push(
+    repo_path: String,
+    product_name: String,
+    preview_branch: String,
+) -> Result<String, String> {
+    let message = format!("preview: {}", product_name);
+    run_git(&repo_path, &["add", "."])?;
+    // Commit may be empty if nothing changed — that's fine
+    let _ = run_git(&repo_path, &["commit", "-m", &message]);
+    // Force push so the preview branch stays clean
+    run_git(&repo_path, &["push", "origin", &format!("HEAD:{}", preview_branch), "--force"])
 }
 
 #[derive(Serialize, Deserialize)]
