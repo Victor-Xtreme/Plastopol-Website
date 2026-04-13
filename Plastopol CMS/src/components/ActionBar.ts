@@ -151,7 +151,7 @@ async function onPull() {
 
   try {
     cmsLog("ActionBar", "calling gitPull(), repo:", config.repo_path);
-    const out = await gitPull(config.repo_path);
+    const out = await gitPull(config.repo_path, config.default_branch);
     cmsLog("ActionBar", "gitPull() succeeded:", out);
     document.dispatchEvent(new CustomEvent("cms:config-saved"));
     alert("Pull complete:\n" + out);
