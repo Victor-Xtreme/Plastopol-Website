@@ -4,7 +4,7 @@ import { renderSidebar } from "./components/Sidebar";
 import { mountProductEditor } from "./components/ProductEditor";
 import { renderActionBar } from "./components/ActionBar";
 import { mountHistoryModal } from "./components/HistoryModal";
-import { state, setProducts, setSelectedId, removeProduct, upsertProduct } from "./lib/store";
+import { state, setProducts, setSelectedId, removeProduct, setPendingNew } from "./lib/store";
 import { readProducts } from "./lib/tauri";
 import { emptyProduct } from "./lib/product";
 import { cmsLog, cmsWarn, cmsErr } from "./lib/logger";
@@ -20,20 +20,17 @@ window.addEventListener("DOMContentLoaded", async () => {
     <div id="action-bar-pane"></div>
   `;
 
-  // Mount delete confirmation modal
   mountDeleteModal(root);
-
-  // ── Event bus ─────────────────────────────────────────────────────────────
-  // ALL events wired here, before any component mounts, so nothing fires into a void.
 
   document.addEventListener("cms:add-product", () => {
     cmsLog("main", "cms:add-product received");
     const p = emptyProduct();
-    cmsLog("main", "new empty product created, id:", p.id);
-    upsertProduct(p);
-    cmsLog("main", "upsertProduct done, total products:", state.products.length);
-    setSelectedId(p.id);
-    cmsLog("main", "setSelectedId done, selectedId:", state.selectedId);
+    cmsLog("main", "new empty product staged (pending), id:", p.id);
+    // FIX: stage as pending-new instead of immediately inserting into the store.
+    // This prevents autosave from writing an empty shell and removes the false
+    // "duplicate ID" error that blocked all saves on pre-existing objects.
+    setPendingNew(p);
+    cmsLog("main", "setPendingNew done, selectedId:", state.selectedId);
   });
 
   document.addEventListener("cms:edit-product", (e: Event) => {
@@ -56,8 +53,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     loadProducts();
   });
 
-  // ── Mount components ───────────────────────────────────────────────────────
-
   cmsLog("main", "mounting ConfigModal...");
   await mountConfigModal(root);
   cmsLog("main", "ConfigModal mounted. state.config:", JSON.stringify(state.config));
@@ -73,7 +68,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   renderActionBar(document.getElementById("action-bar-pane")!);
   cmsLog("main", "ActionBar rendered");
 
-  // If config was already saved from a previous session, load products immediately
   if (state.config?.repo_path) {
     cmsLog("main", "config already present on startup, repo:", state.config.repo_path);
     await loadProducts();
@@ -88,8 +82,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
-
-// ── Delete modal ───────────────────────────────────────────────────────────
 
 function mountDeleteModal(root: HTMLElement) {
   const el = document.createElement("div");
@@ -143,8 +135,6 @@ function showDeleteModal(id: string) {
 
   fresh.focus();
 }
-
-// ── Load products ──────────────────────────────────────────────────────────
 
 async function loadProducts() {
   const repoPath = state.config?.repo_path;

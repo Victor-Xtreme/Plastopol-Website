@@ -33,6 +33,12 @@ function renderEmpty(container: HTMLElement) {
 
 function renderEditor(container: HTMLElement, product: Product) {
   cmsLog("ProductEditor", "renderEditor() — id:", product.id, "name:", product.modelName);
+
+  // FIX: detect whether this is a pending-new product (not yet in products[]).
+  // If it is, we must NOT schedule autosave on draft changes — the user hasn't
+  // saved yet, so writing an empty shell would corrupt the file.
+  const isNew = state.pendingNewProduct?.id === product.id;
+
   container.innerHTML = `
     <div class="editor-scroll">
       <div class="editor-section" id="section-fields"></div>
@@ -40,7 +46,9 @@ function renderEditor(container: HTMLElement, product: Product) {
       <div class="editor-section" id="section-images"></div>
       <div class="editor-section">
         <div id="validation-errors" class="validation-errors hidden"></div>
-        <button class="btn primary full-width" id="btn-save-product">Save Product</button>
+        <button class="btn primary full-width" id="btn-save-product">
+          ${isNew ? "Create Product" : "Save Product"}
+        </button>
       </div>
     </div>
   `;
@@ -59,34 +67,41 @@ function renderEditor(container: HTMLElement, product: Product) {
 
   container.addEventListener("fields:change", () => {
     Object.assign(draft, readEditorFields(fieldsEl));
-    onDraftChange();
+    onDraftChange(isNew);
   });
   container.addEventListener("lists:change", () => {
     Object.assign(draft, readEditorLists(listsEl));
-    onDraftChange();
+    onDraftChange(isNew);
   });
   container.addEventListener("images:change", (e: Event) => {
     const { images, thumbnail } = (e as CustomEvent).detail;
     draft.images = images;
     draft.thumbnail = thumbnail;
-    onDraftChange();
+    onDraftChange(isNew);
   });
 
   container.querySelector("#btn-save-product")!.addEventListener("click", () => {
-    cmsLog("ProductEditor", "Save Product clicked — draft id:", draft.id, "name:", draft.modelName);
+    cmsLog("ProductEditor", "Save Product clicked — draft id:", draft.id, "name:", draft.modelName, "isNew:", isNew);
     Object.assign(draft, readEditorFields(fieldsEl));
     Object.assign(draft, readEditorLists(listsEl));
     saveProduct(container, draft);
   });
 }
 
-function onDraftChange() {
+function onDraftChange(isNew: boolean) {
   markUnsaved();
-  scheduleAutosave();
+  // FIX: only schedule autosave for products that already exist in the store.
+  // For pending-new products, we wait for the explicit Save click so that an
+  // empty (or partially filled) product is never written to products.json.
+  if (!isNew) {
+    scheduleAutosave();
+  }
 }
 
 function saveProduct(container: HTMLElement, draft: Product) {
-  const otherSlugs = state.products.filter((p) => p.id !== draft.id).map((p) => p.slug);
+  const otherSlugs = state.products
+    .filter((p) => p.id !== draft.id)
+    .map((p) => p.slug);
   draft.slug = generateUniqueSlug(draft.modelName, otherSlugs);
 
   const errors = validateProduct(draft, state.products);
@@ -101,6 +116,8 @@ function saveProduct(container: HTMLElement, draft: Product) {
 
   errEl.classList.add("hidden");
   cmsLog("ProductEditor", "upserting product:", draft.id);
+  // upsertProduct also clears pendingNewProduct if this was a new product,
+  // so the sidebar will render it as a normal committed item from here on.
   upsertProduct(draft);
   scheduleAutosave();
 }

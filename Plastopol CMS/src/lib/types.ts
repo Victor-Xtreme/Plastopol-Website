@@ -46,6 +46,10 @@ export interface AppState {
   config: CmsConfig | null;
   products: Product[];
   selectedId: string | null;
+  // Holds a brand-new product that has NOT yet been committed to `products`.
+  // Set when the user clicks "+ Add", cleared on Save (inserts into products)
+  // or when the user navigates away without saving.
+  pendingNewProduct: Product | null;
   unsaved: boolean;
   buildStatus: BuildStatus;
   buildMessage: string;
