@@ -16,7 +16,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       <div className="space-y-4">
         <div className="product-detail-bg rounded-lg overflow-hidden h-96 animate-on-scroll">
           <ProductImage
-            src={`/products/${product.images[0] || product.thumbnail}`}
+            src={`/images/${product.images[0] || product.thumbnail}`}
             alt={product.modelName}
             className="w-full h-full object-cover"
           />
@@ -25,7 +25,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           {product.images.map((image, idx) => (
             <div key={idx} className="product-detail-bg rounded-lg overflow-hidden h-20 animate-on-scroll">
               <ProductImage
-                src={`/products/${image}`}
+                src={`/images/${image}`}
                 alt={`${product.modelName} ${idx + 1}`}
                 className="w-full h-full object-cover"
               />

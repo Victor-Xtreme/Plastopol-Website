@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, dark = false }: ProductCardProps) {
-  const imageUrl = `/products/${product.thumbnail}`;
+  const imageUrl = `/images/${product.thumbnail}`;
   const isSoldOut = !product.inStock;
 
   const card = dark
