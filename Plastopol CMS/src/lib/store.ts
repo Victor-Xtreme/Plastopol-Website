@@ -10,6 +10,7 @@ export const state: AppState = {
   config: null,
   products: [],
   selectedId: null,
+  pendingNewProduct: null,
   unsaved: false,
   buildStatus: "idle",
   buildMessage: "",
@@ -40,6 +41,11 @@ export function setProducts(products: Product[]) {
 }
 
 export function setSelectedId(id: string | null) {
+  // Navigating away from a pending new product discards it without touching
+  // the saved product list, so autosave never writes an empty shell.
+  if (state.pendingNewProduct && id !== state.pendingNewProduct.id) {
+    state.pendingNewProduct = null;
+  }
   state.selectedId = id;
   notify();
 }
@@ -61,7 +67,32 @@ export function setPreviewStatus(status: PreviewStatus, url = "") {
   notify();
 }
 
+/**
+ * Stage a brand-new product without adding it to `products[]` yet.
+ * The editor will detect this via `state.pendingNewProduct` and only call
+ * `upsertProduct` when the user explicitly clicks Save.
+ */
+export function setPendingNew(product: Product) {
+  state.pendingNewProduct = product;
+  state.selectedId = product.id;
+  notify();
+}
+
+/**
+ * Discard the pending-new draft without persisting anything.
+ */
+export function clearPendingNew() {
+  state.pendingNewProduct = null;
+  state.selectedId = null;
+  notify();
+}
+
 export function upsertProduct(product: Product) {
+  // Clear the pending-new slot when the product is committed for the first time.
+  if (state.pendingNewProduct?.id === product.id) {
+    state.pendingNewProduct = null;
+  }
+
   const idx = state.products.findIndex((p) => p.id === product.id);
   if (idx >= 0) {
     state.products[idx] = product;
@@ -80,5 +111,10 @@ export function removeProduct(id: string) {
 }
 
 export function getSelected(): Product | null {
+  // Return the pending-new draft if it matches the selected id, so the editor
+  // can render it before it has been committed to the product list.
+  if (state.pendingNewProduct && state.selectedId === state.pendingNewProduct.id) {
+    return state.pendingNewProduct;
+  }
   return state.products.find((p) => p.id === state.selectedId) ?? null;
 }
