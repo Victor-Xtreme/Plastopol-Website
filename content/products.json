@@ -14,7 +14,7 @@
       "Adjustable height",
       "Lumbar support",
       "Breathable mesh back",
-      "360\u00b0 swivel",
+      "360° swivel",
       "Smooth rolling wheels"
     ],
     "specifications": [
@@ -44,5 +44,32 @@
     "thumbnail": "ergo-comfort-chair-001.jpg",
     "inStock": true,
     "leadTime": "3-5 days"
+  },
+  {
+    "id": "chair-a4sju",
+    "slug": "chair",
+    "modelName": "Chair",
+    "status": "draft",
+    "colors": [
+      "red",
+      "sandalwood",
+      "teak"
+    ],
+    "description": "",
+    "features": [],
+    "specifications": [
+      {
+        "key": "Weight",
+        "value": "2.4kg"
+      }
+    ],
+    "category": "lounge",
+    "tags": [],
+    "images": [
+      "chair-001.jpg"
+    ],
+    "thumbnail": "chair-001.jpg",
+    "inStock": true,
+    "leadTime": ""
   }
 ]
