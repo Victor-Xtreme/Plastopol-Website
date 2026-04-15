@@ -44,7 +44,7 @@ function renderGrid(container: HTMLElement, product: Product) {
     const card = document.createElement("div");
     card.className = `image-card ${isThumbnail ? "is-thumbnail" : ""}`;
     card.innerHTML = `
-      <img src="asset://${repoPath}/public/images/products/${filename}" alt="${filename}" />
+      <img src="asset://${repoPath}/website/public/images/products/${filename}" alt="${filename}" />
       <div class="image-card-name">${filename}</div>
       <div class="image-card-actions">
         <button class="btn-sm ${isThumbnail ? "active" : ""}" data-action="thumb" data-idx="${idx}">

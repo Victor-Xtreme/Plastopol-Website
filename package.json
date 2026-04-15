@@ -3,7 +3,8 @@
     "private": true,
     "scripts": {
         "web": "cd website && npm run dev",
-        "build": "cd website && npm run build"
+        "build": "cd website && npm run build",
+        "app": "cd \"Plastopol CMS\" && npm run tauri dev"
     },
     "dependencies": {
         "@tauri-apps/api": "^2.10.1"

@@ -5,6 +5,7 @@ use base64::{Engine as _, engine::general_purpose};
 
 fn images_dir(repo_path: &str) -> PathBuf {
     PathBuf::from(repo_path)
+        .join("website")
         .join("public")
         .join("images")
         .join("products")
