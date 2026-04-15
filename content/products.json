@@ -44,32 +44,5 @@
     "thumbnail": "ergo-comfort-chair-001.jpg",
     "inStock": true,
     "leadTime": "3-5 days"
-  },
-  {
-    "id": "chair-a4sju",
-    "slug": "chair",
-    "modelName": "Chair",
-    "status": "draft",
-    "colors": [
-      "red",
-      "sandalwood",
-      "teak"
-    ],
-    "description": "",
-    "features": [],
-    "specifications": [
-      {
-        "key": "Weight",
-        "value": "2.4kg"
-      }
-    ],
-    "category": "lounge",
-    "tags": [],
-    "images": [
-      "chair-001.jpg"
-    ],
-    "thumbnail": "chair-001.jpg",
-    "inStock": true,
-    "leadTime": ""
   }
 ]
