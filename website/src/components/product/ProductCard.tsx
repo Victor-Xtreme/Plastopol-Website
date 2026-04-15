@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, dark = false }: ProductCardProps) {
-  const imageUrl = `/images/${product.thumbnail}`;
+  const imageUrl = `/images/products/${product.thumbnail}`;
   const isSoldOut = !product.inStock;
 
   const card = dark
@@ -29,8 +29,8 @@ export function ProductCard({ product, dark = false }: ProductCardProps) {
   return (
     <Link href={`/products/${product.slug}`} className="animate-on-scroll">
       <div className={`group cursor-pointer h-full ${card}`}>
-        {/* Image */}
-        <div className="relative overflow-hidden h-56 animate-on-scroll">
+        {/* Image — no animate-on-scroll here; opacity:0 would hide the image */}
+        <div className="relative overflow-hidden h-56">
           <ProductImage
             src={imageUrl}
             alt={product.modelName}

@@ -12,20 +12,20 @@ interface ProductDetailsProps {
 export function ProductDetails({ product }: ProductDetailsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Left: Images */}
+      {/* Left: Images — no animate-on-scroll on image containers; opacity:0 would hide them */}
       <div className="space-y-4">
-        <div className="product-detail-bg rounded-lg overflow-hidden h-96 animate-on-scroll">
+        <div className="product-detail-bg rounded-lg overflow-hidden h-96">
           <ProductImage
-            src={`/images/${product.images[0] || product.thumbnail}`}
+            src={`/images/products/${product.images[0] || product.thumbnail}`}
             alt={product.modelName}
             className="w-full h-full object-cover"
           />
         </div>
         <div className="grid grid-cols-4 gap-2">
           {product.images.map((image, idx) => (
-            <div key={idx} className="product-detail-bg rounded-lg overflow-hidden h-20 animate-on-scroll">
+            <div key={idx} className="product-detail-bg rounded-lg overflow-hidden h-20">
               <ProductImage
-                src={`/images/${image}`}
+                src={`/images/products/${image}`}
                 alt={`${product.modelName} ${idx + 1}`}
                 className="w-full h-full object-cover"
               />
