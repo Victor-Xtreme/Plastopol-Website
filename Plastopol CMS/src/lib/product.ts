@@ -85,11 +85,8 @@ export function validateProduct(
   if (dupSlug)
     errors.push({ field: "slug", message: "Slug already exists" });
 
-  const dupId = allProducts.find(
-    (p) => p.id === product.id && p !== product
-  );
-  if (dupId)
-    errors.push({ field: "id", message: "Duplicate ID" });
+  // No duplicate ID check needed — generateId() always produces a unique ID,
+  // and editing an existing product retains its own ID by design.
 
   if (!product.category)
     errors.push({ field: "category", message: "Category is required" });

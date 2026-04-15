@@ -20,7 +20,7 @@ export const DEFAULT_FILTERS = {
 
 // Image path settings used by CMS and components
 export const IMAGE_CONFIG = {
-  folder: "/products/",
+  folder: "/images/",
   extension: ".jpg",
   padLength: 3, // zero-padded: 001, 002...
 };
