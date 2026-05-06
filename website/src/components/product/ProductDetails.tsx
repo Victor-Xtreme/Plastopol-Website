@@ -22,11 +22,11 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           />
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {product.images.map((image, idx) => (
-            <div key={idx} className="product-detail-bg rounded-lg overflow-hidden h-20">
+          {product.images.map((image) => (
+            <div key={image} className="product-detail-bg rounded-lg overflow-hidden h-20">
               <ProductImage
                 src={`/images/products/${image}`}
-                alt={`${product.modelName} ${idx + 1}`}
+                alt={`${product.modelName} ${image}`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -74,8 +74,8 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           <div className="animate-on-scroll">
             <h3 className="font-semibold mb-3" style={{ color: 'inherit' }}>Key Features</h3>
             <ul className="space-y-2">
-              {product.features.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-3">
+              {product.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
                   <span className="product-accent font-bold mt-1">✓</span>
                   <span className="product-desc">{feature}</span>
                 </li>
