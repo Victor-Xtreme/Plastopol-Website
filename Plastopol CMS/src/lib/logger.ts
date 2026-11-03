@@ -1,5 +1,5 @@
 // src/lib/logger.ts
-// Writes to <repo_path>/cms-logs.txt via Rust invoke — no plugin-fs JS import needed.
+// Writes to the CMS app-data directory via Rust invoke — no plugin-fs JS import needed.
 
 import { invoke } from "@tauri-apps/api/core";
 import { state } from "./store";
