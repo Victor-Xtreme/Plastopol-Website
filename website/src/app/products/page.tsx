@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
 import { Container } from '../../components/layout/Container';
@@ -20,6 +20,17 @@ const CATEGORY_BUTTONS = [
 export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<Category | ''>('');
+
+  // Respect category links from the homepage without relying on a client-side
+  // router hook that would require a Suspense boundary during static export.
+  useEffect(() => {
+    const categoryParam = new URLSearchParams(window.location.search).get('category');
+    const initialCategory = CATEGORIES.find((category) => category === categoryParam);
+
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, []);
 
   const { matched } = useMemo(() => getCatalog({
     query: search,
