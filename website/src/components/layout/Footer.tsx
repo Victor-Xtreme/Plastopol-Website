@@ -39,7 +39,7 @@ export function Footer({ dark = false }: FooterProps) {
             </p>
             <p className="text-sm">
               Phone:{" "}
-              <a href="tel:+91 8075767580" className="hover:text-[#635cdf]">
+              <a href="tel:+918075767580" className="hover:text-[#635cdf]">
                 +91 8075767580
               </a>
             </p>

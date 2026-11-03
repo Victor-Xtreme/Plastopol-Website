@@ -107,7 +107,7 @@ export default function AboutPage() {
                 <a href="mailto:plastopoly.enquire@gmail.com" className="hover:text-indigo-300 transition">
                   plastopoly@gmail.com
                 </a><br />
-                <a href="tel:+91 8075767580" className="hover:text-indigo-300 transition">
+                <a href="tel:+918075767580" className="hover:text-indigo-300 transition">
                   +91 8075767580
                 </a>
               </p>
