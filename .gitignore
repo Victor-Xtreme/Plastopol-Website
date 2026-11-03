@@ -6,3 +6,4 @@ node_modules/
 .wrangler/
 website/out/
 website/public/images/products/
+cms-logs.txt
